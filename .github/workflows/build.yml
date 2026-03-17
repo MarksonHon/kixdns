@@ -104,32 +104,6 @@ jobs:
         with:
           targets: ${{ matrix.target }}
 
-      # - name: Install cross-compilation dependencies
-      #   if: matrix.arch == 'arm64'
-      #   run: |
-      #     sudo apt update
-      #     sudo apt install -y gcc-aarch64-linux-gnu
-
-      - name: Cache Cargo registry
-        uses: actions/cache@v5
-        with:
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-cargo-registry-
-
-      - name: Cache target (per target)
-        uses: actions/cache@v5
-        with:
-          path: target/${{ matrix.target }}
-          key: ${{ runner.os }}-target-${{ matrix.target }}-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-target-${{ matrix.target }}-
-
       - name: Build
         run: |
           cargo build --release --target ${{ matrix.target }}
@@ -144,7 +118,7 @@ jobs:
 
   build-freebsd:
     name: Build FreeBSD ${{ matrix.arch }} (cross)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
